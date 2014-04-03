@@ -7,6 +7,7 @@ import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.space.continuous.ContinuousSpace;
+import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
@@ -15,9 +16,10 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
-		context.setId("crittersimulator");
+		context.setId("CritterSimulator");
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
@@ -25,13 +27,28 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 				spaceFactory.createContinuousSpace("space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.WrapAroundBorders(),
-						50, 50);
+						100, 100);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> grid = gridFactory.createGrid("grid", context, 
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(),
-						true, 50, 50));
+						true, 100, 100));
+		
+		int herbivoreCount = 2000;
+		for(int i = 0; i < herbivoreCount; i++) {
+			context.add(new Herbivore(space, grid));
+		}
+		
+		int carnivoreCount = 100;
+		for(int i = 0; i < carnivoreCount; i++) {
+			context.add(new Carnivore(space, grid));
+		}
+		
+		for(Object obj : context) {
+			NdPoint pt = space.getLocation(obj);
+			grid.moveTo(obj, (int)pt.getX(), (int)pt.getY());
+		}
 		
 		return context;
 	}
