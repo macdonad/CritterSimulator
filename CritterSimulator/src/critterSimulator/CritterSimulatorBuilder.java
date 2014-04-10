@@ -53,6 +53,11 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 			context.add(new Plant(space, grid));
 		}
 		
+		int humanCount = 5;
+		for(int i = 0; i < humanCount; i++) {
+			context.add(new Human(space, grid));
+		}
+		
 		for(Object obj : context) {
 			NdPoint pt = space.getLocation(obj);
 			grid.moveTo(obj, (int)pt.getX(), (int)pt.getY());

@@ -22,7 +22,7 @@ import repast.simphony.util.SimUtilities;
  * @author Eric Ostrowski, Doug MacDonald
  *
  */
-public class Carnivore extends CritterSimulatorBuilder{
+public class Carnivore{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
