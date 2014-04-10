@@ -1,5 +1,7 @@
 package critterSimulator;
 
+import java.util.Collection;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -16,6 +18,7 @@ import repast.simphony.space.grid.WrapAroundBorders;
 
 public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 
+	private Collection context;
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
@@ -52,5 +55,12 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 		
 		return context;
 	}
-
+	public void kill(Object o)
+	{
+		context.remove(o);
+	}
+	public void spawn(Object o)
+	{
+		context.add(o);
+	}
 }
