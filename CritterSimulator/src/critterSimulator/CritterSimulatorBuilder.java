@@ -38,17 +38,17 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 						new SimpleGridAdder<Object>(),
 						true, 100, 100));
 		
-		int herbivoreCount = 1000;
+		int herbivoreCount = 100;
 		for(int i = 0; i < herbivoreCount; i++) {
 			context.add(new Herbivore(space, grid));
 		}
 		
-		int carnivoreCount = 100;
+		int carnivoreCount = 30;
 		for(int i = 0; i < carnivoreCount; i++) {
 			context.add(new Carnivore(space, grid));
 		}
 		
-		int plantCount = 3000;
+		int plantCount = 200;
 		for(int i = 0; i < plantCount; i++) {
 			context.add(new Plant(space, grid));
 		}

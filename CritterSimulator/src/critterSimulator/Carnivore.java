@@ -26,7 +26,7 @@ public class Carnivore{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private int LifeSpan = 100;
+	private int LifeSpan = 10000;
 	private int Age = 1;
 	
 	public Carnivore(ContinuousSpace<Object> space, Grid<Object> grid) {
