@@ -7,6 +7,7 @@ package critterSimulator;
 
 import java.util.List;
 
+import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
@@ -16,6 +17,7 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.util.ContextUtils;
 import repast.simphony.util.SimUtilities;
 
 /**
@@ -26,6 +28,8 @@ public class Herbivore {
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
+	private int LifeSpan = 40;
+	private int Age = 1;
 	
 	public Herbivore(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
@@ -36,6 +40,7 @@ public class Herbivore {
 	public void step() {
 		// get the grid location of this herbivore
 		GridPoint pt = grid.getLocation(this);
+		boolean PlantHere = false;
 		
 		// use the GridCellNgh class to create GridCells for
 		// the surrounding neighborhood
@@ -51,9 +56,58 @@ public class Herbivore {
 				pointWithMostPlants = cell.getPoint();
 				maxCount = cell.size();
 			}
+			if(cell.getPoint() == pt)
+			{
+				if(cell.size() > 0)
+				{
+					PlantHere = true;
+					eat(this, cell.items());
+				}
+			}
+		}
+				
+		if(!PlantHere)
+		{
+			moveTowards(pointWithMostPlants);
 		}
 		
-		moveTowards(pointWithMostPlants);
+		LifeSpan--;
+		Age++;
+		
+
+		if(Age % 20 == 0)
+		{
+			Spawn(this);
+		}
+		if(LifeSpan <= 0)
+		{
+			die(this);
+		}
+	}
+	
+	private void eat(Herbivore herbivore, Iterable<Plant> iterable) {
+		// Eat Herbivore and Increase Life Span
+		LifeSpan += 10;
+				
+		Context<Object> context = ContextUtils.getContext(herbivore);
+		context.remove(iterable.iterator().next());
+	}
+
+	private void die(Herbivore me) {
+		// Remove Herbivore
+		Context<Object> context = ContextUtils.getContext(me);
+		context.remove(me);
+	}
+
+	private void Spawn(Herbivore me) {
+		// Spawn a new Herbivore 
+		Context<Object> context = ContextUtils.getContext(me);
+		
+		Herbivore c = new Herbivore(space,grid);		
+		context.add(c);
+		
+		NdPoint pt = space.getLocation(me);
+		grid.moveTo(c, (int)pt.getX(), (int)pt.getY());
 	}
 	
 	public void moveTowards(GridPoint pt) {

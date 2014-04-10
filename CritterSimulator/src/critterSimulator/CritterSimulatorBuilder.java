@@ -38,7 +38,7 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 						new SimpleGridAdder<Object>(),
 						true, 100, 100));
 		
-		int herbivoreCount = 2000;
+		int herbivoreCount = 1000;
 		for(int i = 0; i < herbivoreCount; i++) {
 			context.add(new Herbivore(space, grid));
 		}
@@ -48,19 +48,16 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 			context.add(new Carnivore(space, grid));
 		}
 		
+		int plantCount = 3000;
+		for(int i = 0; i < plantCount; i++) {
+			context.add(new Plant(space, grid));
+		}
+		
 		for(Object obj : context) {
 			NdPoint pt = space.getLocation(obj);
 			grid.moveTo(obj, (int)pt.getX(), (int)pt.getY());
 		}
 		
 		return context;
-	}
-	public void kill(Object o)
-	{
-		context.remove(o);
-	}
-	public void spawn(Object o)
-	{
-		context.add(o);
 	}
 }
