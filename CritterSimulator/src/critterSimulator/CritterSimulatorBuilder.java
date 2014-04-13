@@ -26,6 +26,7 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
+		
 		ContinuousSpace<Object> space =
 				spaceFactory.createContinuousSpace("space", context,
 						new RandomCartesianAdder<Object>(),
@@ -33,8 +34,10 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 						100, 100);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
+		
 		Grid<Object> grid = gridFactory.createGrid("grid", context, 
-				new GridBuilderParameters<Object>(new WrapAroundBorders(),
+				new GridBuilderParameters<Object>(
+						new WrapAroundBorders(),
 						new SimpleGridAdder<Object>(),
 						true, 100, 100));
 		
@@ -43,19 +46,9 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 			context.add(new Herbivore(space, grid));
 		}
 		
-		int carnivoreCount = 30;
-		for(int i = 0; i < carnivoreCount; i++) {
-			context.add(new Carnivore(space, grid));
-		}
-		
-		int plantCount = 200;
+		int plantCount = 3000;
 		for(int i = 0; i < plantCount; i++) {
 			context.add(new Plant(space, grid));
-		}
-		
-		int humanCount = 5;
-		for(int i = 0; i < humanCount; i++) {
-			context.add(new Human(space, grid));
 		}
 		
 		for(Object obj : context) {

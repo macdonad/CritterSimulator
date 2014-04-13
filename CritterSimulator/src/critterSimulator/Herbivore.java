@@ -28,8 +28,11 @@ public class Herbivore {
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private int LifeSpan = 4000;
-	private int Age = 1;
+	private final int LifeSpan = 1825; // 5 Year life span
+	private final int ReproductionPeriod = 182; // Reproduces bi-annually
+	private final int FullHunger = 15;
+	private int hunger = FullHunger;
+	private int age = 1;
 	
 	public Herbivore(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
@@ -40,7 +43,7 @@ public class Herbivore {
 	public void step() {
 		// get the grid location of this herbivore
 		GridPoint pt = grid.getLocation(this);
-		boolean PlantHere = false;
+		boolean ate = false;
 		
 		// use the GridCellNgh class to create GridCells for
 		// the surrounding neighborhood
@@ -56,57 +59,64 @@ public class Herbivore {
 				pointWithMostPlants = cell.getPoint();
 				maxCount = cell.size();
 			}
-			if(cell.getPoint() == pt)
-			{
-				if(cell.size() > 0)
-				{
-					PlantHere = true;
-					eat(this, cell.items());
-				}
+			
+			// Rather than having to be on the exact location, allow
+			// the herbivore to eat from neighboring cells.
+			if(hunger < FullHunger) { // Only eat when hungry
+				ate = attemptToEat(cell);
 			}
 		}
-				
-		if(!PlantHere)
-		{
+		
+		if(hunger == 0) {
+			die(); // Starved to death
+			return; // Must return after death to prevent further simulation of this agent
+		}
+		
+		if(!ate) {
 			moveTowards(pointWithMostPlants);
+			hunger--;
 		}
-		
-		LifeSpan--;
-		Age++;
-		
 
-		if(Age % 20 == 0)
-		{
-			Spawn(this);
+		if(age % ReproductionPeriod == 0) {
+			spawn();
 		}
-		if(LifeSpan <= 0)
-		{
-			die(this);
+		
+		if(age == LifeSpan) {
+			die();
+			return;
 		}
+		
+		age++;
 	}
 	
-	private void eat(Herbivore herbivore, Iterable<Plant> iterable) {
-		// Eat Herbivore and Increase Life Span
-		LifeSpan += 10;
-				
-		Context<Object> context = ContextUtils.getContext(herbivore);
-		context.remove(iterable.iterator().next());
+	private boolean attemptToEat(GridCell<Plant> cell) {
+		if(cell.size() > 0) {
+			// Eat first plant in cell
+			Plant plant = cell.items().iterator().next();
+			Context<Object> context = ContextUtils.getContext(plant);
+			context.remove(plant);
+			hunger = FullHunger; // No longer hungry
+			
+			return true;
+		}
+		
+		return false;
 	}
 
-	private void die(Herbivore me) {
+	private void die() {
 		// Remove Herbivore
-		Context<Object> context = ContextUtils.getContext(me);
-		context.remove(me);
+		Context<Object> context = ContextUtils.getContext(this);
+		context.remove(this);
 	}
 
-	private void Spawn(Herbivore me) {
+	private void spawn() {
 		// Spawn a new Herbivore 
-		Context<Object> context = ContextUtils.getContext(me);
+		Context<Object> context = ContextUtils.getContext(this);
 		
 		Herbivore c = new Herbivore(space,grid);		
 		context.add(c);
 		
-		NdPoint pt = space.getLocation(me);
+		NdPoint pt = space.getLocation(this);
 		grid.moveTo(c, (int)pt.getX(), (int)pt.getY());
 	}
 	

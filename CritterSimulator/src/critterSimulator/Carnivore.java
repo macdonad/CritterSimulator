@@ -67,7 +67,7 @@ public class Carnivore{
 		//If Age is multiple of 100 Spawn a Child
 		if(Age % 100 == 0)
 		{
-			Spawn(this);
+			//Spawn(this);
 		}
 		
 		//Chase if not eating
@@ -83,7 +83,7 @@ public class Carnivore{
 		
 		if(LifeSpan <= 0)
 		{
-			die(this);
+			//die(this);
 		}
 	}
 	

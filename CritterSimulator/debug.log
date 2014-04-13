@@ -183,3 +183,59 @@ Caused by: java.lang.NullPointerException
 	at critterSimulator.Plant.Spawn(Plant.java:55)
 	at critterSimulator.Plant.step(Plant.java:49)
 	... 10 more
+FATAL [Thread-8] 2014-04-13 16:32:27,731 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (6.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:206)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.reflect.InvocationTargetException
+	at critterSimulator.Herbivore$$FastClassByCGLIB$$659eb9b7.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.NullPointerException
+	at repast.simphony.space.continuous.AbstractContinuousSpace.getDisplacement(AbstractContinuousSpace.java:448)
+	at repast.simphony.space.SpatialMath.calcAngleFor2DMovement(SpatialMath.java:122)
+	at critterSimulator.Herbivore.moveTowards(Herbivore.java:124)
+	at critterSimulator.Herbivore.step(Herbivore.java:73)
+	... 10 more
+INFO  [AWT-EventQueue-0] 2014-04-13 16:54:57,891 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 16:55:52,449 repast.simphony.ui.widget.MovieMaker - Movie capture has finished metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:17:17,238 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:19:04,466 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:37:21,775 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:40:05,225 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:41:02,525 repast.simphony.ui.widget.MovieMaker - Movie capture has finished metaData=[STATUS]
+ERROR [AWT-EventQueue-0] 2014-04-13 17:42:02,078 repast.simphony.ui.widget.MovieMaker - Error exporting to movie
+java.io.IOException: Existing file C:\Users\Eric\Desktop\SimpleSim2.mov cannot be deleted
+	at com.sun.media.datasink.file.Handler.open(Handler.java:272)
+	at repast.simphony.ui.widget.MovieMaker.createDataSink(MovieMaker.java:208)
+	at repast.simphony.ui.widget.MovieMaker.init(MovieMaker.java:101)
+	at repast.simphony.ui.widget.MovieMaker.addImageAsFrame(MovieMaker.java:149)
+	at repast.simphony.ui.widget.MovieMaker.addImageAsFrame(MovieMaker.java:128)
+	at repast.simphony.ui.widget.MovieMakerConfig$MovieAction$1.run(MovieMakerConfig.java:46)
+	at java.awt.event.InvocationEvent.dispatch(Unknown Source)
+	at java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.awt.EventQueue.access$200(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.awt.EventQueue$3.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)
+INFO  [AWT-EventQueue-0] 2014-04-13 17:43:44,245 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:49:46,890 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:50:27,504 repast.simphony.ui.widget.MovieMaker - Movie capture has finished metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:51:30,871 repast.simphony.ui.widget.MovieMaker - Movie capture has started metaData=[STATUS]
+INFO  [AWT-EventQueue-0] 2014-04-13 17:52:11,273 repast.simphony.ui.widget.MovieMaker - Movie capture has finished metaData=[STATUS]

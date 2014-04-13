@@ -3,6 +3,10 @@
   <type>TWO_D</type>
   <styles>
     <entry>
+      <string>critterSimulator.Plant</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
       <string>critterSimulator.Carnivore</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
@@ -12,6 +16,10 @@
     </entry>
   </styles>
   <editedStyles>
+    <entry>
+      <string>critterSimulator.Plant</string>
+      <string>critterSimulator.Plant.style_2.xml</string>
+    </entry>
     <entry>
       <string>critterSimulator.Carnivore</string>
       <string>critterSimulator.Carnivore.style_3.xml</string>
@@ -31,19 +39,23 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1367552834</hashCode>
+    <hashCode>-1695071602</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
+      <string>critterSimulator.Plant</string>
+      <int>0</int>
+    </entry>
+    <entry>
       <string>critterSimulator.Carnivore</string>
-      <int>1</int>
+      <int>2</int>
     </entry>
     <entry>
       <string>critterSimulator.Herbivore</string>
-      <int>0</int>
+      <int>1</int>
     </entry>
   </layerOrder>
   <projections>
