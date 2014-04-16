@@ -29,6 +29,8 @@ public class Carnivore{
 	private int age = 1;
 	private Herbivore prey;
 	
+	public boolean isDead = false;
+	
 	public Carnivore(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
 		this.grid = grid;
@@ -110,6 +112,7 @@ public class Carnivore{
 
 	private void die() {
 		// Remove Carnivore
+		isDead = true;
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
 	}

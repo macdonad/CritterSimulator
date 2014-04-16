@@ -17,6 +17,7 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.util.SimUtilities;
+import repast.simphony.util.collections.IndexedIterable;
 
 /**
  * @author Eric Ostrowski, Doug MacDonald
@@ -26,89 +27,148 @@ public class Human{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private int LifeSpan = 1000;
-	private int Age = 1;
+	private final int LifeSpan = 36500; // 10 Year life span
+	private final int ReproductionPeriod = 365; // Reproduces annually
+	private final int FullHunger = 20;
+	private int hunger = FullHunger;
+	private int age = 1;
+	private Object prey;
 	
 	public Human(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
-		this.grid = grid;
+		this.grid = grid;		
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 		// get the grid location of this Human
 		GridPoint pt = grid.getLocation(this);
-		boolean FoodHere = false;
+		boolean ate = false;
 		
-		// use the GridCellNgh class to create GridCells for
-		// the surrounding neighborhood
-		GridCellNgh<Object> nghCreator = new GridCellNgh<Object>(grid, pt,
-				Object.class, 1, 1);
-		List<GridCell<Object>> gridCells = nghCreator.getNeighborhood(true);
-		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		Context context = ContextUtils.getContext(this);
 		
-		GridPoint pointWithMostHerbivores = null;
-		int maxCount = -1;
-		for(GridCell<Object> cell : gridCells) {
-			if(cell.size() > maxCount) {
-				pointWithMostHerbivores = cell.getPoint();
-				maxCount = cell.size();
+		// Acquire new prey if ours is invalid
+		if((prey != null || !context.contains(prey)) && !(prey instanceof Human)) {
+			
+			IndexedIterable<Herbivore> herbivoreprey = context.getObjects(Herbivore.class);
+			IndexedIterable<Plant> plantprey = context.getObjects(Plant.class);
+			IndexedIterable<Carnivore> carnivoreprey = context.getObjects(Carnivore.class);
+			
+			double lstDst = 200;
+			
+			for(Plant plant : plantprey) {
+				
+				//Find the closest prey
+				GridPoint preyPt = grid.getLocation(plant);
+				double dist = grid.getDistance(pt, preyPt);
+				
+				if(dist < lstDst) {
+					lstDst = dist;
+					prey = plant;
+				}
 			}
-			if(cell.getPoint() == pt)
-			{
-				if(cell.size() > 0)
-				{
-					FoodHere = true;
-					eat(this, cell.items());
+			
+			for(Herbivore herbivore : herbivoreprey) {
+				
+				//Find the closest prey
+				GridPoint preyPt = grid.getLocation(herbivore);
+				double dist = grid.getDistance(pt, preyPt);
+				
+				if(dist < lstDst) {
+					lstDst = dist;
+					prey = herbivore;
+				}
+			}
+			
+			for(Carnivore carnivore : carnivoreprey) {
+				
+				//Find the closest prey
+				GridPoint preyPt = grid.getLocation(carnivore);
+				double dist = grid.getDistance(pt, preyPt);
+				
+				if(dist < lstDst) {
+					lstDst = dist;
+					prey = carnivore;
 				}
 			}
 		}
 		
-		//If Age is multiple of 100 Spawn a Child
-		if(Age % 300 == 0)
-		{
-			//Spawn(this);
+		// Only hunt if hungry and have valid prey
+		if(hunger < FullHunger) {
+			if(prey != null) {
+				if(prey instanceof Plant)
+				{
+					if(!((Plant)prey).isDead) {
+						moveTowards(grid.getLocation(prey));
+						ate = attemptToEat(prey);
+					}
+				}
+				else if(prey instanceof Herbivore)
+				{
+					if(!((Herbivore)prey).isDead) {
+						moveTowards(grid.getLocation(prey));
+						ate = attemptToEat(prey);
+					}
+				}
+				else if(prey instanceof Carnivore)
+				{
+					if(!((Carnivore)prey).isDead) {
+						moveTowards(grid.getLocation(prey));
+						ate = attemptToEat(prey);
+					}
+				}
+			}
 		}
 		
-		//Chase if not eating
-		if(!FoodHere)
-		{
-			moveTowards(pointWithMostHerbivores);
+		if(hunger == 0) {
+			die();
 		}
 		
-		
-		//Decrement Life Span every step and Increment Age
-		LifeSpan--;
-		Age++;
-		
-		if(LifeSpan <= 0)
-		{
-			//die(this);
+		if(age == LifeSpan) {
+			die();
 		}
+		
+		if(age % ReproductionPeriod == 0) {
+			spawn();
+		}
+		
+		hunger--;
+		age++;
+		
 	}
 	
-	private void eat(Human carnivore, Iterable<Object> iterable) {
-		// Eat Herbivore and Increase Life Span
-		LifeSpan += 10;
-				
-		Context<Object> context = ContextUtils.getContext(carnivore);
-		context.remove(iterable.iterator().next());
-	}
-
-	private void die(Human me) {
-		// Remove Human
-		Context<Object> context = ContextUtils.getContext(me);
-		context.remove(me);
-	}
-
-	private void Spawn(Human me) {
-		// Spawn a new Human 
-		Context<Object> context = ContextUtils.getContext(me);
+	private boolean attemptToEat(Object prey) {
+		GridPoint pt = grid.getLocation(this);
+		GridPoint preyPt = grid.getLocation(prey);
 		
-		Human c = new Human(space,grid);		
+		if(preyPt != null) {
+			if(grid.getDistance(pt, preyPt) <= 1) {
+				// Eat it
+				Context<Object> context = ContextUtils.getContext(prey);
+				context.remove(prey);
+				hunger = FullHunger; // No longer hungry
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private void die() {
+		// Remove Human
+		Context<Object> context = ContextUtils.getContext(this);
+		context.remove(this);
+	}
+
+	private void spawn() {
+		// Spawn a new Human 
+		Context<Object> context = ContextUtils.getContext(this);
+		
+		Carnivore c = new Carnivore(space,grid);		
 		context.add(c);
 		
-		NdPoint pt = space.getLocation(me);
+		NdPoint pt = space.getLocation(this);
 		grid.moveTo(c, (int)pt.getX(), (int)pt.getY());
 	}
 

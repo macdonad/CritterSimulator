@@ -24,6 +24,8 @@ public class Plant {
 	private Grid<Object> grid;
 	private int age = 1;
 	
+	public boolean isDead = false;
+	
 	public Plant(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
 		this.grid = grid;
@@ -44,7 +46,7 @@ public class Plant {
 	}
 	
 	private void die() {
-		
+		isDead = true;
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
 	}
