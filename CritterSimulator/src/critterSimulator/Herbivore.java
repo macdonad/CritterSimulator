@@ -29,10 +29,12 @@ public class Herbivore {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	private final int LifeSpan = 1825; // 5 Year life span
-	private final int ReproductionPeriod = 182; // Reproduces bi-annually
+	private final int ReproductionPeriod = 91;
 	private final int FullHunger = 15;
 	private int hunger = FullHunger;
 	private int age = 1;
+	
+	public boolean isDead = false;
 	
 	public Herbivore(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
@@ -68,13 +70,13 @@ public class Herbivore {
 		}
 		
 		if(hunger == 0) {
+			
 			die(); // Starved to death
 			return; // Must return after death to prevent further simulation of this agent
 		}
 		
 		if(!ate) {
 			moveTowards(pointWithMostPlants);
-			hunger--;
 		}
 
 		if(age % ReproductionPeriod == 0) {
@@ -86,6 +88,7 @@ public class Herbivore {
 			return;
 		}
 		
+		hunger--;
 		age++;
 	}
 	
@@ -105,6 +108,7 @@ public class Herbivore {
 
 	private void die() {
 		// Remove Herbivore
+		isDead = true; //Mark dead in case it is being hunted
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
 	}
