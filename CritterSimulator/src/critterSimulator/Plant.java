@@ -33,24 +33,28 @@ public class Plant {
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
-		
+		//Grow
 		if(age % 100 == 0) {
 			spawn();
 		}
 		
+		//Die of old age
 		if(age == 365) {
 			die();
 		}
 		
+		//Get older
 		age++;
 	}
 	
+	//Remove Plant from Simulation
 	private void die() {
 		isDead = true;
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
 	}
 	
+	//Add Plant to Simulation
 	private void spawn() {
 		// Spawn a new plant 
 		Context<Object> context = ContextUtils.getContext(this);

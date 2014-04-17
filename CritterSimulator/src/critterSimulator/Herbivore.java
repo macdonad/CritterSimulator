@@ -75,19 +75,23 @@ public class Herbivore {
 			return; // Must return after death to prevent further simulation of this agent
 		}
 		
+		//Move towards plants
 		if(!ate) {
 			moveTowards(pointWithMostPlants);
 		}
 
+		//Spawn new Herbivores every reproduction period
 		if(age % ReproductionPeriod == 0) {
 			spawn();
 		}
 		
+		//Die of old age
 		if(age == LifeSpan) {
 			die();
 			return;
 		}
 		
+		//Get older and hungrier
 		hunger--;
 		age++;
 	}

@@ -26,6 +26,7 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
+		//Create the Simulation Area
 		context.setId("CritterSimulator");
 		
 		ContinuousSpaceFactory spaceFactory =
@@ -45,26 +46,31 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 						new SimpleGridAdder<Object>(),
 						true, 100, 100));
 		
+		//Add Herbivores
 		int herbivoreCount = 100;
 		for(int i = 0; i < herbivoreCount; i++) {
 			context.add(new Herbivore(space, grid));
 		}
 		
+		//Add Carnivores
 		int carnivoreCount = 2;
 		for(int i = 0; i < carnivoreCount; i++) {
 			context.add(new Carnivore(space, grid));
 		}
 		
+		//Add Plants
 		int plantCount = 3000;
 		for(int i = 0; i < plantCount; i++) {
 			context.add(new Plant(space, grid));
 		}
 		
+		//Add Humans
 		int humanCount = 4;
 		for(int i = 0; i < humanCount; i++) {
 			context.add(new Human(space, grid));
 		}
 		
+		//Place Agents on simulation
 		for(Object obj : context) {
 			NdPoint pt = space.getLocation(obj);
 			grid.moveTo(obj, (int)pt.getX(), (int)pt.getY());

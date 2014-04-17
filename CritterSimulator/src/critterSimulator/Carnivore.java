@@ -33,8 +33,7 @@ public class Carnivore{
 	
 	public Carnivore(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
-		this.grid = grid;
-		
+		this.grid = grid;		
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
@@ -75,24 +74,30 @@ public class Carnivore{
 			}
 		}
 		
+		//Die of Hunger
 		if(hunger == 0) {
 			die();
 		}
 		
+		//Die of Old Age
 		if(age == LifeSpan) {
 			die();
 		}
 		
+		//Spawn a new Carnivore every Reproduction Period
 		if(age % ReproductionPeriod == 0) {
 			spawn();
 		}
 		
+		//Get Hungrier and Older
 		hunger--;
 		age++;
 		
 	}
 	
+	//Attempt to eat selected Herbivore
 	private boolean attemptToEat(Herbivore herbivore) {
+		//Find Carnivore and Herbivore Location
 		GridPoint pt = grid.getLocation(this);
 		GridPoint preyPt = grid.getLocation(herbivore);
 		
@@ -110,6 +115,7 @@ public class Carnivore{
 		return false;
 	}
 
+	//Remove Carnivore from Simulation
 	private void die() {
 		// Remove Carnivore
 		isDead = true;
@@ -117,6 +123,7 @@ public class Carnivore{
 		context.remove(this);
 	}
 
+	//Add Carnivore to Simulation
 	private void spawn() {
 		// Spawn a new Carnivore 
 		Context<Object> context = ContextUtils.getContext(this);
@@ -128,6 +135,7 @@ public class Carnivore{
 		grid.moveTo(c, (int)pt.getX(), (int)pt.getY());
 	}
 
+	//Move Carnivore
 	public void moveTowards(GridPoint pt) {
 		if(pt != null) {
 			// only move if we are not already in this grid location

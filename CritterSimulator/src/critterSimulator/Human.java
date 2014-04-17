@@ -50,69 +50,88 @@ public class Human{
 		// Acquire new prey if ours is invalid
 		if((prey != null || !context.contains(prey)) && !(prey instanceof Human)) {
 			
+			//Get List of All Agents that the Human Considers Prey
 			IndexedIterable<Herbivore> herbivoreprey = context.getObjects(Herbivore.class);
 			IndexedIterable<Plant> plantprey = context.getObjects(Plant.class);
 			IndexedIterable<Carnivore> carnivoreprey = context.getObjects(Carnivore.class);
 			
+			//Set Maximum Hunting Distance from Current Space
 			double lstDst = 200;
 			
-			for(Plant plant : plantprey) {
-				
-				//Find the closest prey
-				GridPoint preyPt = grid.getLocation(plant);
-				double dist = grid.getDistance(pt, preyPt);
-				
-				if(dist < lstDst) {
-					lstDst = dist;
-					prey = plant;
-				}
-			}
-			
+			//Will Look for something to eat, Closest Prey wins
+			//If Tie Carnivore > Herbivore > Plant
+			//Look for Herbivores to Eat
 			for(Herbivore herbivore : herbivoreprey) {
 				
 				//Find the closest prey
 				GridPoint preyPt = grid.getLocation(herbivore);
 				double dist = grid.getDistance(pt, preyPt);
 				
-				if(dist < lstDst) {
+				if(dist <= lstDst) {
 					lstDst = dist;
 					prey = herbivore;
 				}
 			}
 			
+			//Look for Carnivores to Eat
 			for(Carnivore carnivore : carnivoreprey) {
 				
 				//Find the closest prey
 				GridPoint preyPt = grid.getLocation(carnivore);
 				double dist = grid.getDistance(pt, preyPt);
 				
-				if(dist < lstDst) {
+				if(dist <= lstDst) {
 					lstDst = dist;
 					prey = carnivore;
 				}
+			}
+			//Only eat a plant if nothing else is around
+			if(prey == null)
+			{
+				//Look for Plants to Eat
+				for(Plant plant : plantprey) {
+					
+					//Find the closest prey
+					GridPoint preyPt = grid.getLocation(plant);
+					double dist = grid.getDistance(pt, preyPt);
+					
+					if(dist <= lstDst) {
+						lstDst = dist;
+						prey = plant;
+					}
+				}				
 			}
 		}
 		
 		// Only hunt if hungry and have valid prey
 		if(hunger < FullHunger) {
 			if(prey != null) {
+				//Check if Prey is a Plant
 				if(prey instanceof Plant)
 				{
+					//Check if Prey is already dead
 					if(!((Plant)prey).isDead) {
+						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
 						ate = attemptToEat(prey);
 					}
 				}
+				//Check if prey is a herbivore
 				else if(prey instanceof Herbivore)
 				{
+					//Check if prey is dead
 					if(!((Herbivore)prey).isDead) {
+						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
 						ate = attemptToEat(prey);
 					}
 				}
+				//Check if prey is a carnivore
 				else if(prey instanceof Carnivore)
 				{
+					//Check if prey is dead
 					if(!((Carnivore)prey).isDead) {
+						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
 						ate = attemptToEat(prey);
 					}
@@ -120,23 +139,28 @@ public class Human{
 			}
 		}
 		
+		//If starving then die
 		if(hunger == 0) {
 			die();
 		}
 		
+		//If reach life span then die
 		if(age == LifeSpan) {
 			die();
 		}
 		
+		//Spawn a new Human every Reproduction Period
 		if(age % ReproductionPeriod == 0) {
 			spawn();
 		}
 		
+		//Get Hungrier and Older
 		hunger--;
 		age++;
 		
 	}
 	
+	//Attempt to eat the selected prey
 	private boolean attemptToEat(Object prey) {
 		GridPoint pt = grid.getLocation(this);
 		GridPoint preyPt = grid.getLocation(prey);
@@ -155,12 +179,14 @@ public class Human{
 		return false;
 	}
 
+	//Die, Remove Human from Simulation
 	private void die() {
 		// Remove Human
 		Context<Object> context = ContextUtils.getContext(this);
 		context.remove(this);
 	}
 
+	//Add a Human to the Simulation
 	private void spawn() {
 		// Spawn a new Human 
 		Context<Object> context = ContextUtils.getContext(this);
@@ -172,6 +198,7 @@ public class Human{
 		grid.moveTo(c, (int)pt.getX(), (int)pt.getY());
 	}
 
+	//Move the Human
 	public void moveTowards(GridPoint pt) {
 		// only move if we are not already in this grid location
 		if(!pt.equals(grid.getLocation(this))) {
