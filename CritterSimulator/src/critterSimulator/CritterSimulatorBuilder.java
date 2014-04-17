@@ -1,17 +1,11 @@
 package critterSimulator;
 
-import java.util.Collection;
-
-import com.ibm.media.content.application.mvr.Master;
-
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
-import repast.simphony.engine.environment.RunState;
-import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
@@ -20,9 +14,18 @@ import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.WrapAroundBorders;
 
-public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 
-	private Collection context;
+/**
+ * Primary ContextBuilder class for the CritterSimulator
+ * model.
+ * 
+ * Used to create the main context and seed the initial
+ * set of agents into the context.
+ * 
+ * @author Eric Ostrowski, Doug MacDonald
+ *
+ */
+public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Context build(Context<Object> context) {
@@ -47,7 +50,7 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 						true, 100, 100));
 		
 		//Add Herbivores
-		int herbivoreCount = 100;
+		int herbivoreCount = 150;
 		for(int i = 0; i < herbivoreCount; i++) {
 			context.add(new Herbivore(space, grid));
 		}
@@ -65,7 +68,7 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 		}
 		
 		//Add Humans
-		int humanCount = 4;
+		int humanCount = 1;
 		for(int i = 0; i < humanCount; i++) {
 			context.add(new Human(space, grid));
 		}
@@ -77,26 +80,5 @@ public class CritterSimulatorBuilder implements ContextBuilder<Object> {
 		}
 		
 		return context;
-	}
-	
-	public int plantCount() {
-        final RunState runState = RunState.getInstance();
-
-        // If simulation is not yet started or initialized correctly
-        if (runState == null) {
-                return 0;
-        }
-
-        @SuppressWarnings("unchecked")
-        final Context<Object> masterContext = runState.getMasterContext();
-
-        // If simulation is not initialized correctly and there is no root
-        // context
-        if (null == masterContext) {
-                return 0;
-        }
-
-        System.out.println("Count: " + masterContext.getObjects(Plant.class).size());
-        return masterContext.getObjects(Plant.class).size();
 	}
 }

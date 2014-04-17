@@ -1,9 +1,4 @@
-/**
- * 
- */
 package critterSimulator;
-
-
 
 import java.util.List;
 
@@ -21,6 +16,17 @@ import repast.simphony.util.ContextUtils;
 import repast.simphony.util.SimUtilities;
 
 /**
+ * The Herbivore agent has one primary behavior.
+ * Move towards food and eat it.
+ * 
+ * Herbivores wander around the grid mostly
+ * randomly looking for plants to eat.
+ * 
+ * Herbivores live for 1825 ticks,
+ * reproduce every 91 ticks and are
+ * capable of going 15 ticks without
+ * consuming a plant agent.
+ * 
  * @author Eric Ostrowski, Doug MacDonald
  *
  */
@@ -28,7 +34,7 @@ public class Herbivore {
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private final int LifeSpan = 1825; // 5 Year life span
+	private final int LifeSpan = 1825;
 	private final int ReproductionPeriod = 91;
 	private final int FullHunger = 15;
 	private int hunger = FullHunger;
@@ -96,6 +102,7 @@ public class Herbivore {
 		age++;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private boolean attemptToEat(GridCell<Plant> cell) {
 		if(cell.size() > 0) {
 			// Eat first plant in cell
@@ -110,6 +117,7 @@ public class Herbivore {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void die() {
 		// Remove Herbivore
 		isDead = true; //Mark dead in case it is being hunted
@@ -117,6 +125,7 @@ public class Herbivore {
 		context.remove(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void spawn() {
 		// Spawn a new Herbivore 
 		Context<Object> context = ContextUtils.getContext(this);

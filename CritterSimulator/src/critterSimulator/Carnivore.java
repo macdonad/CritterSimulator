@@ -1,11 +1,7 @@
-/**
- * 
- */
 package critterSimulator;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -15,6 +11,20 @@ import repast.simphony.util.ContextUtils;
 import repast.simphony.util.collections.IndexedIterable;
 
 /**
+ * The Carnivore agent preys specifically on
+ * the Herbivore agent.
+ * 
+ * Carnivores actively select the nearest
+ * Herbivore agent and pursues and consumes
+ * it. Once a Carnivore has begun to hunt
+ * a specific Herbivore, it will not change
+ * target until that Herbivore is dead.
+ * 
+ * Carnivores can live for 3650 ticks and
+ * reproduce every 365 ticks. They are
+ * capable of going without food for 30
+ * ticks.
+ * 
  * @author Eric Ostrowski, Doug MacDonald
  *
  */
@@ -22,9 +32,9 @@ public class Carnivore{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private final int LifeSpan = 3650; // 10 Year life span
-	private final int ReproductionPeriod = 365; // Reproduces annually
-	private final int FullHunger = 20;
+	private final int LifeSpan = 3650;
+	private final int ReproductionPeriod = 365;
+	private final int FullHunger = 30;
 	private int hunger = FullHunger;
 	private int age = 1;
 	private Herbivore prey;
@@ -36,16 +46,16 @@ public class Carnivore{
 		this.grid = grid;		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 		// get the grid location of this Carnivore
 		GridPoint pt = grid.getLocation(this);
-		boolean ate = false;
 		
 		Context context = ContextUtils.getContext(this);
 		
 		// Acquire new prey if ours is invalid
-		if(prey != null || !context.contains(prey)) {
+		if(prey == null || !context.contains(prey)) {
 			
 			IndexedIterable<Herbivore> herbivores = context.getObjects(Herbivore.class);
 			
@@ -69,7 +79,7 @@ public class Carnivore{
 			if(prey != null) {
 				if(!prey.isDead) {
 					moveTowards(grid.getLocation(prey));
-					ate = attemptToEat(prey);
+					attemptToEat(prey);
 				}
 			}
 		}
@@ -96,6 +106,7 @@ public class Carnivore{
 	}
 	
 	//Attempt to eat selected Herbivore
+	@SuppressWarnings("unchecked")
 	private boolean attemptToEat(Herbivore herbivore) {
 		//Find Carnivore and Herbivore Location
 		GridPoint pt = grid.getLocation(this);
@@ -116,6 +127,7 @@ public class Carnivore{
 	}
 
 	//Remove Carnivore from Simulation
+	@SuppressWarnings("unchecked")
 	private void die() {
 		// Remove Carnivore
 		isDead = true;
@@ -124,6 +136,7 @@ public class Carnivore{
 	}
 
 	//Add Carnivore to Simulation
+	@SuppressWarnings("unchecked")
 	private void spawn() {
 		// Spawn a new Carnivore 
 		Context<Object> context = ContextUtils.getContext(this);

@@ -1,25 +1,29 @@
-/**
- * 
- */
 package critterSimulator;
-
-import java.util.List;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.query.space.grid.GridCell;
-import repast.simphony.query.space.grid.GridCellNgh;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
-import repast.simphony.util.SimUtilities;
 import repast.simphony.util.collections.IndexedIterable;
 
 /**
+ * The Human agent represents an omnivore.
+ * 
+ * Human agents are "smart" in the sense
+ * that they will pursue both carnivores
+ * and herbivores that are within a
+ * reasonable hunting distance. If not,
+ * Human agents will resort to eating just
+ * plants to survive.
+ * 
+ * Humans live for 3650 ticks and reproduce
+ * every 365 ticks. They are capable of going
+ * without food for 30 ticks.
+ * 
  * @author Eric Ostrowski, Doug MacDonald
  *
  */
@@ -27,9 +31,9 @@ public class Human{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private final int LifeSpan = 3650; // 10 Year life span
-	private final int ReproductionPeriod = 365; // Reproduces annually
-	private final int FullHunger = 20;
+	private final int LifeSpan = 3650;
+	private final int ReproductionPeriod = 365;
+	private final int FullHunger = 30;
 	private int hunger = FullHunger;
 	private int age = 1;
 	private Object prey;
@@ -39,16 +43,16 @@ public class Human{
 		this.grid = grid;		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 		// get the grid location of this Human
 		GridPoint pt = grid.getLocation(this);
-		boolean ate = false;
 		
 		Context context = ContextUtils.getContext(this);
 		
 		// Acquire new prey if ours is invalid
-		if((prey != null || !context.contains(prey)) && !(prey instanceof Human)) {
+		if(prey == null || !context.contains(prey)) {
 			
 			//Get List of All Agents that the Human Considers Prey
 			IndexedIterable<Herbivore> herbivoreprey = context.getObjects(Herbivore.class);
@@ -56,7 +60,7 @@ public class Human{
 			IndexedIterable<Carnivore> carnivoreprey = context.getObjects(Carnivore.class);
 			
 			//Set Maximum Hunting Distance from Current Space
-			double lstDst = 200;
+			double lstDst = 15;
 			
 			//Will Look for something to eat, Closest Prey wins
 			//If Tie Carnivore > Herbivore > Plant
@@ -86,7 +90,7 @@ public class Human{
 				}
 			}
 			//Only eat a plant if nothing else is around
-			if(prey == null)
+			if(prey == null || !context.contains(prey))
 			{
 				//Look for Plants to Eat
 				for(Plant plant : plantprey) {
@@ -113,7 +117,7 @@ public class Human{
 					if(!((Plant)prey).isDead) {
 						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
-						ate = attemptToEat(prey);
+						attemptToEat(prey);
 					}
 				}
 				//Check if prey is a herbivore
@@ -123,7 +127,7 @@ public class Human{
 					if(!((Herbivore)prey).isDead) {
 						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
-						ate = attemptToEat(prey);
+						attemptToEat(prey);
 					}
 				}
 				//Check if prey is a carnivore
@@ -133,7 +137,7 @@ public class Human{
 					if(!((Carnivore)prey).isDead) {
 						//Move to prey and attempt to eat
 						moveTowards(grid.getLocation(prey));
-						ate = attemptToEat(prey);
+						attemptToEat(prey);
 					}
 				}
 			}
@@ -161,6 +165,7 @@ public class Human{
 	}
 	
 	//Attempt to eat the selected prey
+	@SuppressWarnings("unchecked")
 	private boolean attemptToEat(Object prey) {
 		GridPoint pt = grid.getLocation(this);
 		GridPoint preyPt = grid.getLocation(prey);
@@ -180,6 +185,7 @@ public class Human{
 	}
 
 	//Die, Remove Human from Simulation
+	@SuppressWarnings("unchecked")
 	private void die() {
 		// Remove Human
 		Context<Object> context = ContextUtils.getContext(this);
@@ -187,6 +193,7 @@ public class Human{
 	}
 
 	//Add a Human to the Simulation
+	@SuppressWarnings("unchecked")
 	private void spawn() {
 		// Spawn a new Human 
 		Context<Object> context = ContextUtils.getContext(this);

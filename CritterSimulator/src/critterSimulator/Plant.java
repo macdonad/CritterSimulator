@@ -1,9 +1,4 @@
-/**
- * 
- */
 package critterSimulator;
-
-
 
 import java.util.Random;
 
@@ -15,6 +10,12 @@ import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ContextUtils;
 
 /**
+ * The Plant agent serves as the foundation
+ * food source for the other agents.
+ * Plants neither more nor eat, but do
+ * reproduce every 100 ticks and die after
+ * 365 ticks.
+ * 
  * @author Eric Ostrowski, Doug MacDonald
  *
  */
@@ -48,6 +49,7 @@ public class Plant {
 	}
 	
 	//Remove Plant from Simulation
+	@SuppressWarnings("unchecked")
 	private void die() {
 		isDead = true;
 		Context<Object> context = ContextUtils.getContext(this);
@@ -55,6 +57,7 @@ public class Plant {
 	}
 	
 	//Add Plant to Simulation
+	@SuppressWarnings("unchecked")
 	private void spawn() {
 		// Spawn a new plant 
 		Context<Object> context = ContextUtils.getContext(this);
