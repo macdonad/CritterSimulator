@@ -27,7 +27,7 @@ public class Human{
 
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
-	private final int LifeSpan = 36500; // 10 Year life span
+	private final int LifeSpan = 3650; // 10 Year life span
 	private final int ReproductionPeriod = 365; // Reproduces annually
 	private final int FullHunger = 20;
 	private int hunger = FullHunger;
@@ -165,7 +165,7 @@ public class Human{
 		// Spawn a new Human 
 		Context<Object> context = ContextUtils.getContext(this);
 		
-		Carnivore c = new Carnivore(space,grid);		
+		Human c = new Human(space,grid);		
 		context.add(c);
 		
 		NdPoint pt = space.getLocation(this);
